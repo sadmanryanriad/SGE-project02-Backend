@@ -6,6 +6,8 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.yv9dii9.mongodb.net/${process.env.DB}?retryWrites=true&w=majority&appName=Cluster0`;
 const employeeRoute = require("./routes/employee");
+const signUp = require("./controllers/signUp");
+const login = require("./controllers/login");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -29,8 +31,8 @@ mongoose
     app.get("/", async (req, res) => {
       res.status(200).json("HOME PAGE");
     });
-    // app.get("/signup", signUp);
-    // app.post("/login", login);
+    app.post("/signup", signUp);
+    app.post("/login", login);
     // app.get("/role/:email", getRole);
 
     app.listen(port, () => {
