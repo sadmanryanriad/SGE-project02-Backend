@@ -11,6 +11,7 @@ const login = require("./controllers/login");
 const expense = require("./controllers/expense");
 const getExpensesByEmail = require("./controllers/getExpensesByEmail");
 const { authUser, authorizeRole } = require("./middlewares/auth");
+const getExpensesByBranch = require("./controllers/getExpensesByBranch");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -38,6 +39,13 @@ mongoose
     app.post("/expense", authUser, expense);
     //get expense by email
     app.get("/expense/:email", authUser, getExpensesByEmail);
+    // Get expenses by branch
+    app.post(
+      "/expense/branch",
+      authUser,
+      authorizeRole(["finance", "ceo", "admin"]),
+      getExpensesByBranch
+    );
     //signup
     app.post("/signup", signUp);
     //login
