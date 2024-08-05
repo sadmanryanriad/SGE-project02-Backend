@@ -9,7 +9,8 @@ const employeeRoute = require("./routes/employee");
 const signUp = require("./controllers/signUp");
 const login = require("./controllers/login");
 const expense = require("./controllers/expense");
-const getExpensesByEmail = require("./controllers/expenseByEmail");
+const getExpensesByEmail = require("./controllers/getExpensesByEmail");
+const { authUser, authorizeRole } = require("./middlewares/auth");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -33,9 +34,13 @@ mongoose
     app.get("/", async (req, res) => {
       res.status(200).json("HOME PAGE");
     });
-    app.post("/expense", expense);
-    app.get("/expense/:email", getExpensesByEmail);
+    //create expense
+    app.post("/expense", authUser, expense);
+    //get expense by email
+    app.get("/expense/:email", authUser, getExpensesByEmail);
+    //signup
     app.post("/signup", signUp);
+    //login
     app.post("/login", login);
     // app.get("/role/:email", getRole);
 

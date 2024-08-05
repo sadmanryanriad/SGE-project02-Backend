@@ -2,7 +2,6 @@ const Expense = require("../models/expense");
 
 const getExpensesByEmail = async (req, res) => {
   const { email } = req.params;
-  //   console.log(`Fetching expenses for email: ${email}`);
 
   try {
     // Validate email format
@@ -10,8 +9,17 @@ const getExpensesByEmail = async (req, res) => {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
+    // Only the user itself or roles 'finance', 'ceo', or 'admin' can access
+    if (
+      req.user.email !== email &&
+      req.user.role !== "finance" &&
+      req.user.role !== "ceo" &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ error: "Permission denied" });
+    }
+
     const expenses = await Expense.find({ email });
-    // console.log(`Found ${expenses.length} expenses for email: ${email}`);
 
     if (expenses.length === 0) {
       return res

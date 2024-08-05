@@ -8,11 +8,13 @@ const createExpense = async (req, res) => {
     if (
       !expenseData.expenseTitle ||
       !expenseData.amount ||
-      !expenseData.email ||
       !expenseData.branch
     ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+
+    //user email who requested
+    expenseData.email = req.user.email;
 
     const newExpense = new Expense(expenseData);
     const savedExpense = await newExpense.save();
