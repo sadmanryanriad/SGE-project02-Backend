@@ -14,6 +14,7 @@ const { authUser, authorizeRole } = require("./middlewares/auth");
 const getExpensesByBranch = require("./controllers/getExpensesByBranch");
 const getAllExpenses = require("./controllers/getAllExpenses");
 const financeRoute = require("./routes/finance");
+const getRole = require("./controllers/getRole");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -60,7 +61,8 @@ mongoose
     app.post("/signup", signUp);
     //login
     app.post("/login", login);
-    // app.get("/role/:email", getRole);
+    //fetch role of an user
+    app.get("/getRole/:email", getRole);
 
     app.listen(port, () => {
       console.log(`Connected to database and listening on port: ${port}`);
