@@ -37,7 +37,7 @@ const createExpense = async (req, res) => {
       return res.status(400).json({ error: "Error uploading file" });
     }
 
-    const { expenseTitle, amount, branch, notes, status } = req.body;
+    const { expenseTitle, amount, branch, notes, status, username } = req.body;
     const file = req.file;
 
     if (!expenseTitle || !amount || !branch) {
@@ -56,6 +56,8 @@ const createExpense = async (req, res) => {
         branch,
         notes,
         status,
+        username,
+        role: req.user.role,
         receipt: receiptUrl,
         email: req.user.email,
       };

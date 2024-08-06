@@ -32,6 +32,12 @@ const expenseSchema = new mongoose.Schema({
     type: String,
     default: "pending",
   },
+  username: {
+    type: String,
+  },
+  role: {
+    type: String,
+  },
 });
 
 const Expense = mongoose.model("Expense", expenseSchema);
