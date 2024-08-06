@@ -28,6 +28,10 @@ const expenseSchema = new mongoose.Schema({
   receipt: {
     type: String,
   },
+  status: {
+    type: String,
+    default: "pending",
+  },
 });
 
 const Expense = mongoose.model("Expense", expenseSchema);
