@@ -13,6 +13,7 @@ const getExpensesByEmail = require("./controllers/getExpensesByEmail");
 const { authUser, authorizeRole } = require("./middlewares/auth");
 const getExpensesByBranch = require("./controllers/getExpensesByBranch");
 const getAllExpenses = require("./controllers/getAllExpenses");
+const financeRoute = require("./routes/finance");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -30,8 +31,9 @@ app.use(express.json());
 mongoose
   .connect(uri)
   .then(() => {
-    // protected routes
+    // personal routes
     app.use("/employee", employeeRoute);
+    app.use("/finance", financeRoute);
 
     app.get("/", async (req, res) => {
       res.status(200).json("HOME PAGE");
@@ -48,7 +50,12 @@ mongoose
       getExpensesByBranch
     );
     //get all expenses (paging)
-    app.get("/expenses", getAllExpenses);
+    app.get(
+      "/expenses",
+      authUser,
+      authorizeRole(["finance", "ceo", "admin"]),
+      getAllExpenses
+    );
     //signup
     app.post("/signup", signUp);
     //login
