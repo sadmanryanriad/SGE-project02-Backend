@@ -33,7 +33,7 @@ mongoose
   .then(() => {
     // personal routes
     app.use("/employee", employeeRoute);
-    app.use("/finance", financeRoute);
+    app.use("/finance", authUser, authorizeRole(["finance"]), financeRoute);
 
     app.get("/", async (req, res) => {
       res.status(200).json("HOME PAGE");
@@ -46,7 +46,7 @@ mongoose
     app.post(
       "/expense/branch",
       authUser,
-      authorizeRole(["finance", "ceo", "admin"]),
+      authorizeRole(["finance", "ceo"]),
       getExpensesByBranch
     );
     //get all expenses (paging)
