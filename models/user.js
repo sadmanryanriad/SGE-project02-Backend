@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     enum: ["employee", "finance", "ceo", "hr", "admin"],
     required: [true, "Role is required"],
   },
+  role: {
+    type: String,
+    required: [true, "Branch is required"],
+  },
 });
 
 const User = mongoose.model("user", userSchema);
