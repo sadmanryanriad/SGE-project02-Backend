@@ -15,6 +15,7 @@ const getExpensesByBranch = require("./controllers/getExpensesByBranch");
 const getAllExpenses = require("./controllers/getAllExpenses");
 const financeRoute = require("./routes/finance");
 const getRole = require("./controllers/getRole");
+const ceoRoute = require("./routes/ceo");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -35,6 +36,7 @@ mongoose
     // personal routes
     app.use("/employee", employeeRoute);
     app.use("/finance", authUser, authorizeRole(["finance"]), financeRoute);
+    app.use("/ceo", authUser, authorizeRole(["ceo"]), ceoRoute);
 
     app.get("/", async (req, res) => {
       res.status(200).json("HOME PAGE");
