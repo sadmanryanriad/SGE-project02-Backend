@@ -12,6 +12,7 @@ const expense = require("./controllers/expense");
 const getExpensesByEmail = require("./controllers/getExpensesByEmail");
 const { authUser, authorizeRole } = require("./middlewares/auth");
 const getExpensesByBranch = require("./controllers/getExpensesByBranch");
+const getAllExpenses = require("./controllers/getAllExpenses");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -46,6 +47,8 @@ mongoose
       authorizeRole(["finance", "ceo", "admin"]),
       getExpensesByBranch
     );
+    //get all expenses (paging)
+    app.get("/expenses", getAllExpenses);
     //signup
     app.post("/signup", signUp);
     //login
