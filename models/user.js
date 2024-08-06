@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
     enum: ["employee", "finance", "ceo", "hr", "admin"],
     required: [true, "Role is required"],
   },
-  role: {
+  branch: {
     type: String,
     required: [true, "Branch is required"],
   },
