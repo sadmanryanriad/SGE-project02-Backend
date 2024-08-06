@@ -19,9 +19,11 @@ const getExpensesByBranch = async (req, res) => {
         .json({ message: "No expenses found for this branch" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Expenses retrieved successfully", data: expenses });
+    res.status(200).json({
+      message: "Expenses retrieved successfully",
+      totalCount: expenses.length,
+      data: expenses,
+    });
   } catch (error) {
     console.error("Error fetching expenses by branch:", error);
     res.status(500).json({ error: "Internal server error" });
