@@ -50,7 +50,7 @@ const createExpense = async (req, res) => {
       if (file) {
         receiptUrl = await uploadToCloudinary(file.path);
       }
-      if (!receiptUrl) {
+      if (receiptUrl) {
         status = "auto granted";
       }
 
