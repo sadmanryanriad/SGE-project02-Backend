@@ -1,33 +1,29 @@
 const Expense = require("../models/expense");
-const cloudinary = require("../config/cloudinaryConfig");
+const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 
-// Multer storage setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
-
+// Multer setup for memory storage
+const storage = multer.memoryStorage();
 const upload = multer({ storage }).single("receipt");
 
-const uploadToCloudinary = async (filePath) => {
-  try {
-    const result = await cloudinary.uploader.upload(filePath);
-    fs.unlinkSync(filePath); // Delete the file from the local storage after upload
-    return result.secure_url;
-  } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
-    throw new Error("Failed to upload file to Cloudinary");
-  }
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const uploadToCloudinary = async (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream((error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.secure_url);
+      }
+    });
+    stream.end(buffer);
+  });
 };
 
 const createExpense = async (req, res) => {
@@ -38,7 +34,6 @@ const createExpense = async (req, res) => {
     }
 
     let { expenseTitle, amount, branch, notes, status, username } = req.body;
-    // const parsedAmount = parseFloat(amount); //not necessary for mongoose.
     const file = req.file;
 
     if (!expenseTitle || !amount || !branch) {
@@ -48,7 +43,7 @@ const createExpense = async (req, res) => {
     try {
       let receiptUrl = null;
       if (file) {
-        receiptUrl = await uploadToCloudinary(file.path);
+        receiptUrl = await uploadToCloudinary(file.buffer);
       }
       if (receiptUrl) {
         status = "auto granted";
