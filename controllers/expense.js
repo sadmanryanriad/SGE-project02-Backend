@@ -37,8 +37,8 @@ const createExpense = async (req, res) => {
       return res.status(400).json({ error: "Error uploading file" });
     }
 
-    const { expenseTitle, amount, branch, notes, status, username } = req.body;
-    // const parsedAmount = parseFloat(amount);
+    let { expenseTitle, amount, branch, notes, status, username } = req.body;
+    // const parsedAmount = parseFloat(amount); //not necessary for mongoose.
     const file = req.file;
 
     if (!expenseTitle || !amount || !branch) {
@@ -46,9 +46,12 @@ const createExpense = async (req, res) => {
     }
 
     try {
-      let receiptUrl = "";
+      let receiptUrl = null;
       if (file) {
         receiptUrl = await uploadToCloudinary(file.path);
+      }
+      if (!receiptUrl) {
+        status = "auto granted";
       }
 
       const expenseData = {
