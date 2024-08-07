@@ -21,7 +21,7 @@ const getUsersWithTotalExpenses = require("./controllers/getUsersWithTotalExpens
 //middlewares
 // Allow requests from specific origin and support credentials
 const corsOptions = {
-  origin: ["http://localhost:5173", ""],
+  origin: ["http://localhost:5173", "https://sge-project02.web.app/"],
   credentials: true,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Content-Type,Authorization",
