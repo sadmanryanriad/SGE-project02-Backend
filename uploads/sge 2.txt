@@ -1,0 +1,38 @@
+1. sign up employee & login#
+2. add expense by email#
+3. show all expense by employee email #
+4. show all expense by all branch#
+4. create finance account#
+5. approve/decline expense by finance#
+6. fetch role of an user#
+7. fetch user by branch and role#
+8. change a users branch
+9. get all expenses (pagination)#
+
+users:
+ -username
+ -email
+ -password
+ -branch
+
+finance:
+ -firstName & lastName
+ -email
+ -branch
+
+employee:
+ -firstName & lastName
+ -email
+ -branch
+
+ceo:
+ -firstName & lastName
+ -email
+
+expense: 
+-expense title*
+-amount*
+-date*
+-branch*
+-notes
+-receipt
