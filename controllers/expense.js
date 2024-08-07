@@ -38,9 +38,10 @@ const createExpense = async (req, res) => {
     }
 
     const { expenseTitle, amount, branch, notes, status, username } = req.body;
+    const parsedAmount = parseFloat(amount);
     const file = req.file;
 
-    if (!expenseTitle || !amount || !branch) {
+    if (!expenseTitle || !parsedAmount || !branch) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -52,7 +53,7 @@ const createExpense = async (req, res) => {
 
       const expenseData = {
         expenseTitle,
-        amount,
+        parsedAmount,
         branch,
         notes,
         status,
