@@ -16,6 +16,7 @@ const getAllExpenses = require("./controllers/getAllExpenses");
 const financeRoute = require("./routes/finance");
 const getRole = require("./controllers/getRole");
 const ceoRoute = require("./routes/ceo");
+const getUsersWithTotalExpenses = require("./controllers/getUsersWithTotalExpenses");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -66,6 +67,13 @@ mongoose
     app.post("/login", login);
     //fetch role of an user
     app.get("/getRole/:email", getRole);
+    // fetch users with their total expenses
+    app.get(
+      "/users/expenses",
+      authUser,
+      authorizeRole(["admin", "finance", "ceo"]),
+      getUsersWithTotalExpenses
+    );
 
     app.listen(port, () => {
       console.log(`Connected to database and listening on port: ${port}`);
