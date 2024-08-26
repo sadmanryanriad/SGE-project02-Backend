@@ -26,7 +26,7 @@ const expenseSchema = new mongoose.Schema({
     type: String,
   },
   receipt: {
-    type: String,
+    type: [String],
   },
   status: {
     type: String,

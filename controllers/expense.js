@@ -17,7 +17,8 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage }).single("receipt");
+// const upload = multer({ storage }).single("receipt");
+const upload = multer({ storage }).array("receipt"); 
 
 const uploadToCloudinary = async (filePath) => {
   try {
@@ -39,20 +40,25 @@ const createExpense = async (req, res) => {
 
     let { expenseTitle, amount, branch, notes, status, username } = req.body;
     // const parsedAmount = parseFloat(amount); //not necessary for mongoose.
-    const file = req.file;
+    const files = req.files;
 
     if (!expenseTitle || !amount || !branch) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
-      let receiptUrl = null;
-      if (file) {
-        receiptUrl = await uploadToCloudinary(file.path);
+      let receiptUrls = [];
+      if (files && files.length > 0) {
+        for (const file of files) {
+          const receiptUrl = await uploadToCloudinary(file.path);
+          receiptUrls.push(receiptUrl);
+        }
       }
-      if (receiptUrl) {
+
+      if (receiptUrls.length > 0) {
         status = "auto granted";
       }
+
 
       const expenseData = {
         expenseTitle,
@@ -62,7 +68,7 @@ const createExpense = async (req, res) => {
         status,
         username,
         role: req.user.role,
-        receipt: receiptUrl,
+        receipt: receiptUrls,
         email: req.user.email,
       };
 
