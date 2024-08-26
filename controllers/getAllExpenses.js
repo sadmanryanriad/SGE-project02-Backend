@@ -12,6 +12,7 @@ const getAllExpenses = async (req, res) => {
     // Find expenses and pagination
     const [allExpense, totalExpensesCount] = await Promise.all([
       Expense.find()
+        .sort({ date: -1 }) // Sort by date in descending order
         .skip(validPage * validNumber)
         .limit(validNumber),
       Expense.countDocuments({}),
