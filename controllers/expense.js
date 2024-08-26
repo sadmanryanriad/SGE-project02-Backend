@@ -1,8 +1,6 @@
 const Expense = require("../models/expense");
-const cloudinary = require("../config/cloudinaryConfig");
+const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 
 // Multer storage setup
 const storage = multer.diskStorage({
@@ -20,15 +18,24 @@ const storage = multer.diskStorage({
 // const upload = multer({ storage }).single("receipt");
 const upload = multer({ storage }).array("receipt"); 
 
-const uploadToCloudinary = async (filePath) => {
-  try {
-    const result = await cloudinary.uploader.upload(filePath);
-    fs.unlinkSync(filePath); // Delete the file from the local storage after upload
-    return result.secure_url;
-  } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
-    throw new Error("Failed to upload file to Cloudinary");
-  }
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const uploadToCloudinary = async (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream((error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.secure_url);
+      }
+    });
+    stream.end(buffer);
+  });
 };
 
 const createExpense = async (req, res) => {
