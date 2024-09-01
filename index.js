@@ -17,6 +17,7 @@ const financeRoute = require("./routes/finance");
 const getRole = require("./controllers/getRole");
 const ceoRoute = require("./routes/ceo");
 const getUsersWithTotalExpenses = require("./controllers/getUsersWithTotalExpenses");
+const createFinance = require("./controllers/finance/financeRegistration");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -73,6 +74,12 @@ mongoose
       authUser,
       authorizeRole(["admin", "finance", "ceo"]),
       getUsersWithTotalExpenses
+    );
+    app.post(
+      "/create-finance",
+      authUser,
+      authorizeRole(["ceo"]),
+      createFinance
     );
 
     app.listen(port, () => {

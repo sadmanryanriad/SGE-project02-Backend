@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-const userSchema = new mongoose.Schema({
+const FinanceSchema = new Schema({
   firstName: {
     type: String,
     required: [true, "First name is required"],
@@ -16,26 +17,19 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "Email is required"],
-    unique: [true, "Email already exists"],
+    unique: true,
     match: [/.+\@.+\..+/, "Email is not valid"],
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
   },
   role: {
     type: String,
-    enum: ["employee", "finance", "ceo", "hr", "admin"],
-    required: [true, "Role is required"],
+    default: "finance", // Default role for finance users
   },
-  branch: {
-    type: String,
-    required: [true, "Branch is required"],
-  },
-  firebaseUid: {
-    type: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-const User = mongoose.model("user", userSchema);
-module.exports = User;
+const Finance = mongoose.model("Finance", FinanceSchema);
+
+module.exports = Finance;
