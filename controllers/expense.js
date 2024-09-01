@@ -75,9 +75,12 @@ const createExpense = async (req, res) => {
       const newExpense = new Expense(expenseData);
       const savedExpense = await newExpense.save();
 
-      res
-        .status(201)
-        .json({ message: "Expense created successfully", data: savedExpense });
+      if (status === "auto granted") {
+        res.status(201).json({ message: "Expense added successfully & expense amount has been added", data: savedExpense });
+      } else {
+        res.status(201).json({ message: "Expense created successfully ,  wait for the expense grant", data: savedExpense });
+      }
+
     } catch (error) {
       console.error("Error creating expense:", error);
 

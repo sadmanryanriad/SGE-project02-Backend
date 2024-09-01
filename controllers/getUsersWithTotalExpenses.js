@@ -12,6 +12,9 @@ const getUsersWithTotalExpenses = async (req, res) => {
       matchStage.role = role;
     }
 
+    // Add status filter to the match stage
+    matchStage.status = { $in: ["auto granted", "granted"] };
+
     const pipeline = [
       { $match: matchStage },
       {
