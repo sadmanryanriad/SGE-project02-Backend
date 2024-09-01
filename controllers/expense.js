@@ -39,14 +39,20 @@ const createExpense = async (req, res) => {
     }
 
     let { expenseTitle, amount, branch, notes, status, username } = req.body;
-    // const parsedAmount = parseFloat(amount); //not necessary for mongoose.
     const files = req.files;
+    const userRole = req.user.role; 
 
     if (!expenseTitle || !amount || !branch) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
+
+       // Determine the status based on user role and presence of files
+       if (userRole === "ceo") {
+        status = "auto granted";
+      } 
+
       let receiptUrls = [];
       if (files && files.length > 0) {
         for (const file of files) {
@@ -67,7 +73,7 @@ const createExpense = async (req, res) => {
         notes,
         status,
         username,
-        role: req.user.role,
+        role: userRole,
         receipt: receiptUrls,
         email: req.user.email,
       };

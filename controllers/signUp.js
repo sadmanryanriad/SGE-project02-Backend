@@ -32,7 +32,7 @@ const signUp = async (req, res) => {
       console.error(`Error sending email to: ${email}`, emailError);
     }
   } catch (error) {
-    console.error("Error during sign-up:", error);
+    console.error("Error during sign-up:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
