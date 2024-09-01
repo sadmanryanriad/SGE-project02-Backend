@@ -2,7 +2,6 @@ const Finance = require("../../models/Finance"); // MongoDB model for finance us
 const saveUser = require("../../controllers/users/saveUser"); // Utility function for saving user data
 const sendEmail = require("../../others/sendEmail"); // Email sending utility
 const admin = require("../../others/firebaseService"); // Initialized Firebase Admin SDK
-console.log("Imported saveUser function:", saveUser);
 
 const financeRegistration = async (req, res) => {
   const { firstName, lastName, email, password, branch } = req.body;
