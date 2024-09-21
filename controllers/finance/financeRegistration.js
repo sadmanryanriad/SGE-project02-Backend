@@ -7,7 +7,7 @@ const financeRegistration = async (req, res) => {
   const { firstName, lastName, email, password, branch } = req.body;
 
   // Validate required fields
-  if (!firstName || !lastName || !email || !password) {
+  if (!firstName || !lastName || !email || !password || !branch) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
