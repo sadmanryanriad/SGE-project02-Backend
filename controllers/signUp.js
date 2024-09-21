@@ -1,40 +1,79 @@
 const sendMail = require("../others/sendEmail");
 const saveUser = require("../controllers/users/saveUser");
+const admin = require("../others/firebaseService"); // Initialized Firebase Admin SDK
 
 const signUp = async (req, res) => {
-  const user = req.body;
-  console.log(
-    `sending email to: ${user?.email} username: ${user?.firstName} ${user?.lastName}`
-  );
+  const { firstName, lastName, email, password, branch } = req.body;
+
+  // Validate required fields
+  if (!firstName || !lastName || !email || !password || !branch) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
 
   try {
+    // First, create the Firebase account
+    const firebaseUser = await admin.auth().createUser({
+      email,
+      password,
+      displayName: `${firstName} ${lastName}`,
+    });
+    console.log(firebaseUser);
+
+    // Save user data
+    const user = {
+      firstName,
+      lastName,
+      email,
+      password,
+      branch,
+      role: "employee",
+      firebaseUid: firebaseUser.uid, // Save the Firebase UID for reference
+    };
     const savedUser = await saveUser(user);
-    // if user not saved
+
     if (!savedUser) {
-      return res
-        .status(500)
-        .json({ message: "Internal server error. User not saved!" });
+      // If saving MCO data fails, delete the Firebase user to maintain consistency
+      await admin.auth().deleteUser(firebaseUser.uid);
+      return res.status(500).json("Internal server error");
     }
 
-    res
-      .status(201)
-      .json({ message: "Sign-up successful and email will be sent" });
+    res.status(201).json({
+      message: "Employee registered successfully. Email has been sent to your email.",
+      user: {
+        name: `${firstName} ${lastName}`,
+        email: savedUser.email,
+        role: savedUser.role,
+      },
+    });
 
-    // send email
-    try {
-      await sendMail(
-        user.email,
-        "Welcome to Our App",
-        `Hello ${user.firstName} ${user.lastName}, welcome to our app!`,
-        `<p>Hello <strong>${user?.firstName} ${user?.lastName}</strong>, welcome to our app!</p>`
-      );
-    } catch (emailError) {
-      console.error(`Error sending email to: ${email}`, emailError);
-    }
+    // Send email notifications asynchronously
+    const emailSubject = "Welcome to Shabuj Global Education";
+    const emailText =
+      `Dear  ${firstName} ${lastName}\n\n` +
+      `You are now a employee of ${branch}.\n\n` +
+      `You can login to your dashboard.\n\n`;
+    sendMail(email, emailSubject, emailText).catch(console.error);
   } catch (error) {
-    console.error("Error during sign-up:", error.message);
-    res.status(500).json({ error: error.message });
+    // Handle the duplicate email error
+    if (error.message === "Email already exists") {
+      res.status(400).json({ message: "Email already exists" });
+    } else if (
+      error.code === 11000 &&
+      error.keyPattern &&
+      error.keyPattern.email
+    ) {
+      res.status(400).json({ message: "Email already exists" });
+    } else if (error.name === "ValidationError") {
+      const errors = Object.keys(error.errors).map(
+        (key) => error.errors[key].message
+      );
+      res.status(400).json({ errors });
+    } else {
+      res.status(500).json({ message: error.message });
+    }
   }
+
+ 
 };
 
 module.exports = signUp;
