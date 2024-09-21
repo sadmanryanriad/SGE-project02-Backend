@@ -18,6 +18,7 @@ const getRole = require("./controllers/getRole");
 const ceoRoute = require("./routes/ceo");
 const getUsersWithTotalExpenses = require("./controllers/getUsersWithTotalExpenses");
 const createFinance = require("./controllers/finance/financeRegistration");
+const decodeEmail = require("./controllers/decodeEmail");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -81,6 +82,8 @@ mongoose
       authorizeRole(["ceo"]),
       createFinance
     );
+    //decode email
+    app.get("/decodeEmail/:encodedEmail", decodeEmail); //console.log(Buffer.from("am9obi5leGFtcGxlLmNvbQ==", "base64").toString("utf-8"));
 
     app.listen(port, () => {
       console.log(`Connected to database and listening on port: ${port}`);

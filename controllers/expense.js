@@ -2,28 +2,27 @@ const Expense = require("../models/expense");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const crypto = require("crypto");
+
+// Function to Base64 encode the email address
+const encodeEmail = (email) => {
+  return Buffer.from(email).toString("base64");
+};
 
 // Set the file size limit (2MB)
 const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
-// Function to hash the email address
-const hashEmail = (email) => {
-  return crypto.createHash("md5").update(email).digest("hex");
-};
-
-// Ensure that the directory for each email exists
+// Ensure that the directory for each encoded email exists
 const ensureDirectoryExists = (dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 };
 
-// Multer storage setup to store files in a hashed email directory
+// Multer storage setup to store files in an encoded email directory
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const emailHash = hashEmail(req.user.email);
-    const userDirectory = `files/${emailHash}/`;
+    const encodedEmail = encodeEmail(req.user.email);
+    const userDirectory = `files/${encodedEmail}/`;
 
     // Ensure the user-specific directory exists
     ensureDirectoryExists(userDirectory);
