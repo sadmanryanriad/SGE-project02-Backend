@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 });
 
 // const upload = multer({ storage }).single("receipt");
-const upload = multer({ storage }).array("receipt"); 
+const upload = multer({ storage }).array("receipt");
 
 const uploadToCloudinary = async (filePath) => {
   try {
@@ -40,18 +40,17 @@ const createExpense = async (req, res) => {
 
     let { expenseTitle, amount, branch, notes, status, username } = req.body;
     const files = req.files;
-    const userRole = req.user.role; 
+    const userRole = req.user.role;
 
     if (!expenseTitle || !amount || !branch) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     try {
-
-       // Determine the status based on user role and presence of files
-       if (userRole === "ceo") {
+      // Determine the status based on user role and presence of files
+      if (userRole === "ceo") {
         status = "auto granted";
-      } 
+      }
 
       let receiptUrls = [];
       if (files && files.length > 0) {
@@ -64,7 +63,6 @@ const createExpense = async (req, res) => {
       if (receiptUrls.length > 0) {
         status = "auto granted";
       }
-
 
       const expenseData = {
         expenseTitle,
@@ -82,11 +80,22 @@ const createExpense = async (req, res) => {
       const savedExpense = await newExpense.save();
 
       if (status === "auto granted") {
-        res.status(201).json({ message: "Expense added successfully & expense amount has been added", data: savedExpense });
+        res
+          .status(201)
+          .json({
+            message:
+              "Expense added successfully & expense amount has been added",
+            data: savedExpense,
+          });
       } else {
-        res.status(201).json({ message: "Expense created successfully ,  wait for the expense grant", data: savedExpense });
+        res
+          .status(201)
+          .json({
+            message:
+              "Expense created successfully ,  wait for the expense to be granted",
+            data: savedExpense,
+          });
       }
-
     } catch (error) {
       console.error("Error creating expense:", error);
 
