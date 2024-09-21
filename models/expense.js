@@ -25,9 +25,16 @@ const expenseSchema = new mongoose.Schema({
   notes: {
     type: String,
   },
-  receipt: {
-    type: [String],
-  },
+  receipt: [
+    {
+      filename: String,
+      path: String,
+      uploadedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
   status: {
     type: String,
     default: "pending",
