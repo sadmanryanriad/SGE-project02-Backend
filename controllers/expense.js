@@ -2,23 +2,33 @@ const Expense = require("../models/expense");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 
 // Set the file size limit (2MB)
 const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
-// Ensure that the /files directory exists
+// Function to hash the email address
+const hashEmail = (email) => {
+  return crypto.createHash("md5").update(email).digest("hex");
+};
+
+// Ensure that the directory for each email exists
 const ensureDirectoryExists = (dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 };
 
-ensureDirectoryExists("files/");
-
-// Multer storage setup to store files in the 'files' directory
+// Multer storage setup to store files in a hashed email directory
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "files/");
+    const emailHash = hashEmail(req.user.email);
+    const userDirectory = `files/${emailHash}/`;
+
+    // Ensure the user-specific directory exists
+    ensureDirectoryExists(userDirectory);
+
+    cb(null, userDirectory);
   },
   filename: (req, file, cb) => {
     cb(
