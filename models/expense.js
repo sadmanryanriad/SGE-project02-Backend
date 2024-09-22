@@ -28,11 +28,7 @@ const expenseSchema = new mongoose.Schema({
   receipt: [
     {
       filename: String,
-      path: String,
-      uploadedAt: {
-        type: Date,
-        default: Date.now,
-      },
+      fileInfo: Object,
     },
   ],
   status: {

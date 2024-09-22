@@ -27,7 +27,6 @@ const storage = multer.diskStorage({
     // Ensure the user-specific directory exists
     ensureDirectoryExists(userDirectory);
 
-
     cb(null, userDirectory);
   },
   filename: (req, file, cb) => {
@@ -35,7 +34,6 @@ const storage = multer.diskStorage({
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
     );
-
   },
 });
 
@@ -61,7 +59,7 @@ const upload = multer({
   fileFilter: fileFilter,
 }).single("receipt");
 
-// Expense creation logic
+// Expense creation controller
 const createExpense = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
@@ -69,7 +67,7 @@ const createExpense = async (req, res) => {
       return res.status(400).json({ error: err.message });
     }
 
-    console.log('Uploaded file info:', req.file); 
+    // console.log('Uploaded file info:', req.file);
     const { expenseTitle, amount, branch, notes, status, username } = req.body;
     const file = req.file; // Single file
     const userRole = req.user.role;
@@ -83,7 +81,7 @@ const createExpense = async (req, res) => {
       if (file) {
         receiptFile = {
           filename: file.filename,
-          path: file.path,
+          fileInfo: req.file,
         };
       }
 
@@ -92,16 +90,12 @@ const createExpense = async (req, res) => {
         amount,
         branch,
         notes,
-        status:
-          userRole === "ceo" || receiptFile
-            ? "auto granted"
-            : 'pending',
+        status: userRole === "ceo" || receiptFile ? "auto granted" : "pending", //ceo and user with receipt gets auto granted
         username,
         role: userRole,
-        receipt: receiptFile, // Single file instead of an array
+        receipt: receiptFile, // Single file
         email: req.user.email,
       };
-
 
       const newExpense = new Expense(expenseData);
       const savedExpense = await newExpense.save();
