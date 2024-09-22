@@ -27,6 +27,7 @@ const storage = multer.diskStorage({
     // Ensure the user-specific directory exists
     ensureDirectoryExists(userDirectory);
 
+
     cb(null, userDirectory);
   },
   filename: (req, file, cb) => {
@@ -34,6 +35,7 @@ const storage = multer.diskStorage({
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
     );
+
   },
 });
 
@@ -57,7 +59,7 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: MAX_SIZE },
   fileFilter: fileFilter,
-}).array("receipt");
+}).single("receipt");
 
 // Expense creation logic
 const createExpense = async (req, res) => {
@@ -67,8 +69,9 @@ const createExpense = async (req, res) => {
       return res.status(400).json({ error: err.message });
     }
 
+    console.log('Uploaded file info:', req.file); 
     const { expenseTitle, amount, branch, notes, status, username } = req.body;
-    const files = req.files;
+    const file = req.file; // Single file
     const userRole = req.user.role;
 
     if (!expenseTitle || !amount || !branch) {
@@ -76,12 +79,12 @@ const createExpense = async (req, res) => {
     }
 
     try {
-      let receiptFiles = [];
-      if (files && files.length > 0) {
-        receiptFiles = files.map((file) => ({
+      let receiptFile = null;
+      if (file) {
+        receiptFile = {
           filename: file.filename,
           path: file.path,
-        }));
+        };
       }
 
       const expenseData = {
@@ -90,14 +93,15 @@ const createExpense = async (req, res) => {
         branch,
         notes,
         status:
-          userRole === "ceo" || receiptFiles.length > 0
+          userRole === "ceo" || receiptFile
             ? "auto granted"
-            : status,
+            : 'pending',
         username,
         role: userRole,
-        receipt: receiptFiles,
+        receipt: receiptFile, // Single file instead of an array
         email: req.user.email,
       };
+
 
       const newExpense = new Expense(expenseData);
       const savedExpense = await newExpense.save();
