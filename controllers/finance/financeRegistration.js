@@ -1,4 +1,3 @@
-const Finance = require("../../models/Finance"); // MongoDB model for finance users
 const saveUser = require("../../controllers/users/saveUser"); // Utility function for saving user data
 const sendEmail = require("../../others/sendEmail"); // Email sending utility
 const admin = require("../../others/firebaseService"); // Initialized Firebase Admin SDK
@@ -11,10 +10,13 @@ const financeRegistration = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
+  const emailToSave = email.toLowerCase().trim();
+
+
   try {
     // First, create the Firebase account
     const firebaseUser = await admin.auth().createUser({
-      email,
+      email:emailToSave,
       password,
       displayName: `${firstName} ${lastName}`,
     });
@@ -23,21 +25,13 @@ const financeRegistration = async (req, res) => {
     const user = {
       firstName,
       lastName,
-      email,
+      email:emailToSave,
       password, // Hash the password before saving if necessary
       branch,
       role: "finance",
       firebaseUid: firebaseUser.uid, // Save the Firebase UID for reference
     };
     const savedUser = await saveUser(user);
-
-    // Save finance-specific data to MongoDB
-    // const newFinance = new Finance({
-    //   firstName,
-    //   lastName,
-    //   email,
-    // });
-    // const savedFinance = await newFinance.save();
 
     if (!savedUser) {
       // If saving finance data fails, delete the Firebase user to maintain consistency

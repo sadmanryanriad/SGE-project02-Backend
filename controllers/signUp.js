@@ -10,10 +10,12 @@ const signUp = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
+  const emailToSave = email.toLowerCase().trim();
+
   try {
     // First, create the Firebase account
     const firebaseUser = await admin.auth().createUser({
-      email,
+      email:emailToSave,
       password,
       displayName: `${firstName} ${lastName}`,
     });
@@ -23,7 +25,7 @@ const signUp = async (req, res) => {
     const user = {
       firstName,
       lastName,
-      email,
+      email:emailToSave,
       password,
       branch,
       role: "employee",
