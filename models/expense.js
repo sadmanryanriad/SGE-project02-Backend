@@ -29,6 +29,8 @@ const expenseSchema = new mongoose.Schema({
     {
       filename: String,
       humanReadableFileSize: String,
+      downloadLink: String,
+      previewLink: String,
       fileInfo: Object,
     },
   ],

@@ -51,10 +51,21 @@ const createExpense = async (req, res) => {
     try {
       let receiptFile = null;
       if (file) {
+        // Construct the file download URL
+        const downloadLink = `${req.protocol}://${req.get(
+          "host"
+        )}/file-download/${file.filename}`;
+        // Construct the file previewLink URL
+        const previewLink = `${req.protocol}://${req.get("host")}/file/${
+          file.filename
+        }`;
+
         receiptFile = {
           filename: file.filename,
           humanReadableFileSize: formatFileSize(file.size),
           fileInfo: req.file,
+          downloadLink,
+          previewLink,
         };
       }
 
