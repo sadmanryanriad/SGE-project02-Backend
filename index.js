@@ -1,10 +1,10 @@
 const express = require("express");
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const mongoose = require("mongoose");
-const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.yv9dii9.mongodb.net/${process.env.DB}?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASS}@cluster0.yv9dii9.mongodb.net/${process.env.DB}?retryWrites=true&w=majority&appName=Cluster0`;
 const employeeRoute = require("./routes/employee");
 const signUp = require("./controllers/signUp");
 const login = require("./controllers/login");
