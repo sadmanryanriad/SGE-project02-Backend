@@ -20,6 +20,7 @@ const getUsersWithTotalExpenses = require("./controllers/getUsersWithTotalExpens
 const createFinance = require("./controllers/finance/financeRegistration");
 const decodeEmail = require("./controllers/decodeEmail");
 const downloadFile = require("./controllers/downloadFile");
+const getFile = require("./controllers/getFile");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -85,6 +86,8 @@ mongoose
     );
     //download files
     app.get("/file-download/:filePath", downloadFile);
+    //static files
+    app.get("/file/:filePath", getFile);
 
     app.listen(port, () => {
       console.log(`Connected to database and listening on port: ${port}`);
