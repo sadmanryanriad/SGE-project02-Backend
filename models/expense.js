@@ -28,6 +28,7 @@ const expenseSchema = new mongoose.Schema({
   receipt: [
     {
       filename: String,
+      humanReadableFileSize: String,
       fileInfo: Object,
     },
   ],
