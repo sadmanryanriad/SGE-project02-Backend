@@ -25,7 +25,12 @@ const getFile = require("./controllers/getFile");
 //middlewares
 // Allow requests from specific origin and support credentials
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://sge-project02.web.app/"],
+  origin: [
+    "http://localhost:5173",
+    "https://sge-project02.web.app/",
+    "https://finance.studyuk.today",
+    "http://finance.studyuk.today",
+  ],
   credentials: true,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: "Content-Type,Authorization",
