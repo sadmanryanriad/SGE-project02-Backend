@@ -51,14 +51,11 @@ const createExpense = async (req, res) => {
     try {
       let receiptFile = null;
       if (file) {
+        console.log(process.env.BACKEND_URL);
         // Construct the file download URL
-        const downloadLink = `${req.protocol}://${req.get(
-          "host"
-        )}/file-download/${file.filename}`;
+        const downloadLink = `${process.env.BACKEND_URL}/file-download/${file.filename}`;
         // Construct the file previewLink URL
-        const previewLink = `${req.protocol}://${req.get("host")}/file/${
-          file.filename
-        }`;
+        const previewLink = `${process.env.BACKEND_URL}/file/${file.filename}`;
 
         receiptFile = {
           filename: file.filename,
