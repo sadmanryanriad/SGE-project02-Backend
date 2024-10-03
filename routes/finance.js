@@ -1,5 +1,6 @@
 const express = require("express");
 const changeExpenseStatus = require("../controllers/finance/changeExpenseStatus");
+const getEmployeeForBudget = require("../controllers/finance/getEmployeeForBudget");
 const financeRoute = express();
 
 financeRoute.get("/", (req, res) => {
@@ -8,5 +9,6 @@ financeRoute.get("/", (req, res) => {
 
 //change expense status
 financeRoute.patch("/changeExpenseStatus/:id", changeExpenseStatus);
+financeRoute.get("/budgets/:branch", getEmployeeForBudget);
 
 module.exports = financeRoute;
