@@ -2,7 +2,7 @@ const sendMail = require("../others/sendEmail");
 
 const login = async (req, res) => {
   const { email, username = "" } = req.body;
-  console.log(`sending email to: ${email} username: ${username}`);
+  // console.log(`sending email to: ${email} username: ${username}`);
   // login logic pore dibo ...
 
   //send email to the user
