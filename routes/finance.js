@@ -9,6 +9,6 @@ financeRoute.get("/", (req, res) => {
 
 //change expense status
 financeRoute.patch("/changeExpenseStatus/:id", changeExpenseStatus);
-financeRoute.get("/budgets/:branch", getEmployeeForBudget);
+financeRoute.get("/budgets", getEmployeeForBudget);
 
 module.exports = financeRoute;
