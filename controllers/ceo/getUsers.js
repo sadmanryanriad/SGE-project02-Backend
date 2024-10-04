@@ -2,10 +2,13 @@ const User = require("../../models/user");
 
 const getUsers = async (req, res) => {
   try {
-    const { branch, additional, role } = req.query;
+    const { branch, additional, role,email } = req.query;
 
     const filter = {};
 
+    if (email) {
+      filter.email = email;
+    }
     // Handle multiple branches
     if (branch) filter.branch = branch;
     if (additional) {

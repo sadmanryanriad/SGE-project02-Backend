@@ -1,3 +1,4 @@
+const User = require("../models/user"); // Assuming you have a User model for user data
 const Expense = require("../models/expense");
 const multer = require("multer");
 const path = require("path");
@@ -40,7 +41,7 @@ const createExpense = async (req, res) => {
       return res.status(400).json({ error: err.message });
     }
 
-    const { expenseTitle, amount, branch, notes, status, username } = req.body;
+    const { expenseTitle, amount, branch, notes,  username } = req.body;
     const file = req.file; // Single file
     const userRole = req.user.role;
 
@@ -65,12 +66,37 @@ const createExpense = async (req, res) => {
         };
       }
 
+      // Fetch the user to update the remaining budget
+      const user = await User.findOne({ email: req.user.email });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      console.log("user======>", user);
+      // Check if the expense is "auto granted" (for CEO or if a receipt exists)
+      const expenseStatus =
+        userRole === "ceo" || receiptFile ? "auto granted" : "pending";
+
+      // If auto granted, deduct the amount from the user's remaining budget
+      if (expenseStatus === "auto granted") {
+        if (user.budget.remainingBudget >= amount) {
+          user.budget.remainingBudget -= amount;
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Insufficient budget for this expense" });
+        }
+      }
+
+      // Save the updated user
+      await user.save();
+
       const expenseData = {
         expenseTitle,
         amount,
         branch,
         notes,
-        status: userRole === "ceo" || receiptFile ? "auto granted" : "pending", // CEO and user with receipt get auto granted
+        status: expenseStatus, // Set status
         username,
         role: userRole,
         receipt: receiptFile, // Single file
