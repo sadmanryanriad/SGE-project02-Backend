@@ -2,12 +2,25 @@ const User = require("../../models/user");
 
 const getUsers = async (req, res) => {
   try {
-    const { branch, role } = req.query;
+    const { branch, additional, role } = req.query;
 
-    // Create filter object based on query parameters
     const filter = {};
+
+    // Handle multiple branches
     if (branch) filter.branch = branch;
-    if (role) filter.role = role;
+    if (additional) {
+      if (filter.branch) {
+        filter.branch = { $in: [filter.branch, additional] };
+      } else {
+        filter.branch = additional;
+      }
+    }
+
+    // Handle multiple roles (e.g., employee, admin)
+    if (role) {
+      const roleArray = role.split(",");  // Assume role can be "employee,admin"
+      filter.role = { $in: roleArray };
+    }
 
     const result = await User.find(filter);
 
