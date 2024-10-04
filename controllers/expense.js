@@ -72,7 +72,6 @@ const createExpense = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      console.log("user======>", user);
       // Check if the expense is "auto granted" (for CEO or if a receipt exists)
       const expenseStatus =
         userRole === "ceo" || receiptFile ? "auto granted" : "pending";
