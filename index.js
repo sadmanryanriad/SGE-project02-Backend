@@ -97,35 +97,35 @@ mongoose
     app.get("/file/:filePath", getFile);
 
     // Budget allocation every month
+    cron.schedule("* * * * *", async () => {
+      try {
+        const now = new Date();
+        const currentDate = now.toISOString().split("T")[0];
+        const budgetsDue = await User.find({
+          $expr: {
+            $eq: [
+              {
+                $dateToString: { format: "%Y-%m-%d", date: "$budget.dueDate" },
+              },
+              currentDate,
+            ],
+          },
+        });
 
-    // cron.schedule("* * * * *", async () => {
-    //   try {
-    //     const now = new Date();
-    //     const currentDate = now.toISOString().split("T")[0];
+        for (const budget of budgetsDue) {
+          budget.budget.dueDate = undefined;
+          await budget.save();
+        }
 
-    //     const budgetsDue = await User.find({
-    //       $expr: {
-    //         $eq: [
-    //           { $dateToString: { format: "%Y-%m-%d", date: "$dueDate" } },
-    //           currentDate,
-    //         ],
-    //       },
-    //     });
-
-    //     for (const budget of budgetsDue) {
-    //       budget.dueDate = undefined; // Remove the dueDate
-    //       await budget.save();
-    //     }
-
-    //     if (budgetsDue.length > 0) {
-    //       console.log(
-    //         `${budgetsDue.length} budgets had removed their due dates .`
-    //       );
-    //     }
-    //   } catch (error) {
-    //     console.error("Error while running cron job: ", error);
-    //   }
-    // });
+        if (budgetsDue.length > 0) {
+          console.log(
+            `${budgetsDue.length} budgets had removed their due dates .`
+          );
+        }
+      } catch (error) {
+        console.error("Error while running cron job: ", error);
+      }
+    });
 
     app.listen(port, () => {
       console.log(`Connected to database and listening on port: ${port}`);
