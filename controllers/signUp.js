@@ -1,7 +1,6 @@
 const sendMail = require("../others/sendEmail");
 const saveUser = require("../controllers/users/saveUser");
-const saveBudget = require("../controllers/users/saveBudget");
-const admin = require("../others/firebaseService");
+const admin = require("../others/firebaseService"); // Initialized Firebase Admin SDK
 
 const signUp = async (req, res) => {
   const { firstName, lastName, email, password, branch } = req.body;
@@ -16,7 +15,7 @@ const signUp = async (req, res) => {
   try {
     // First, create the Firebase account
     const firebaseUser = await admin.auth().createUser({
-      email: emailToSave,
+      email:emailToSave,
       password,
       displayName: `${firstName} ${lastName}`,
     });
@@ -26,35 +25,22 @@ const signUp = async (req, res) => {
     const user = {
       firstName,
       lastName,
-      email: emailToSave,
+      email:emailToSave,
       password,
       branch,
       role: "employee",
-      firebaseUid: firebaseUser.uid,
+      firebaseUid: firebaseUser.uid, // Save the Firebase UID for reference
     };
-    // Save user data
-    const budget = {
-      name: firstName + " " + lastName,
-      email: emailToSave,
-      branch,
-      role: "employee",
-      firebaseUid: firebaseUser.uid,
-    };
-
     const savedUser = await saveUser(user);
-    const savedBudget = await saveBudget(budget);
 
-    if (!savedUser || !savedBudget) {
+    if (!savedUser) {
+      // If saving MCO data fails, delete the Firebase user to maintain consistency
       await admin.auth().deleteUser(firebaseUser.uid);
-      if (savedUser) {
-        await deleteUser(savedUser._id); // Delete from MongoDB if user was saved
-      }
       return res.status(500).json("Internal server error");
     }
 
     res.status(201).json({
-      message:
-        "Employee registered successfully. Email has been sent to your email.",
+      message: "Employee registered successfully. Email has been sent to your email.",
       user: {
         name: `${firstName} ${lastName}`,
         email: savedUser.email,
@@ -88,6 +74,8 @@ const signUp = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   }
+
+ 
 };
 
 module.exports = signUp;

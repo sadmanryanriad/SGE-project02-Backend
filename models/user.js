@@ -35,6 +35,27 @@ const userSchema = new mongoose.Schema({
   firebaseUid: {
     type: String,
   },
+  budget: {
+    givenBudget: {
+      type: Number,
+      default: 0,
+    },
+    remainingBudget: {
+      type: Number,
+      default: 0,
+    },
+    requestBudget: {
+      type: Number,
+      default: 0,
+    },
+    allocationDate: {
+      type: Date,
+      // default: Date.now,
+    },
+    dueDate: {
+      type: Date,
+    },
+  },
 });
 
 const User = mongoose.model("user", userSchema);
