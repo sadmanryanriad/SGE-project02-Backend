@@ -1,4 +1,4 @@
-const Budget = require("../../models/budget");
+const User = require("../../models/user");
 
 const updateBudget = async (req, res) => {
   try {
@@ -6,30 +6,30 @@ const updateBudget = async (req, res) => {
     const { givenAmount } = req.body; // Assuming the new budget amount is provided in the request body
 
     // Find the budget by ID
-    const budget = await Budget.findById(id);
+    const user = await User.findById(id);
 
-    if (!budget) {
-      return res.status(404).json({ message: "Budget not found" });
+    if (!user) {
+      return res.status(404).json({ message: "Employee not found" });
     }
 
     // Update the given amount
-    budget.givenBudget = givenAmount;
-    budget.remainingBudget = givenAmount;
+    user.budget.givenBudget = givenAmount;
+    user.budget.remainingBudget = givenAmount;
 
     // Update allocation date to the current date
-    budget.allocationDate = new Date();
+    user.budget.allocationDate = new Date();
 
     // Set due date to the same day next month
     const currentDate = new Date();
     const nextMonth = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
-    budget.dueDate = nextMonth;
+    user.budget.dueDate = nextMonth;
 
     // Save the updated budget
-    await budget.save();
+    await user.save();
 
     res.status(200).json({
-      message: "Budget updated successfully",
-      budget,
+      message: "Employee budget updated successfully",
+      user,
     });
   } catch (error) {
     console.error("Error updating budget:", error);

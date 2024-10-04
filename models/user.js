@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
     },
     allocationDate: {
       type: Date,
-      // default: Date.now,
+      default: Date.now,
     },
     dueDate: {
       type: Date,
