@@ -23,6 +23,7 @@ const createFinance = require("./controllers/finance/financeRegistration");
 const decodeEmail = require("./controllers/decodeEmail");
 const downloadFile = require("./controllers/downloadFile");
 const getFile = require("./controllers/getFile");
+const sendExpendRequest = require("./controllers/sendExpendRequest");
 
 //middlewares
 // Allow requests from specific origin and support credentials
@@ -90,6 +91,13 @@ mongoose
       authUser,
       authorizeRole(["ceo"]),
       createFinance
+    );
+    // request for money expend
+    app.patch(
+      "/expendreq",
+      authUser,
+      authorizeRole(["ceo", "admin", "employee"]),
+      sendExpendRequest
     );
     //download files
     app.get("/file-download/:filePath", downloadFile);

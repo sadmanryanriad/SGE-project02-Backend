@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
     },
     requestNote: {
       type: String,
-      maxlength: [200, "Request note must be less than 200 words"],
+      maxlength: [400, "Request note must be less than 400 letter"],
     },
     allocationDate: {
       type: Date,
