@@ -29,8 +29,8 @@ const getUsers = async (req, res) => {
 
     // If action is "request", filter users with requestBudget and requestNote
     if (action === "request") {
-      filter["budget.requestBudget"] = { $exists: true };
-      filter["budget.requestNote"] = { $exists: true };
+      filter["budget.requestBudget"] = { $gt: 0 }; // Greater than 0
+      filter["budget.requestNote"] = { $ne: "" }; // Not an empty string
     }
 
     // Fetch the users based on the filter
@@ -40,7 +40,7 @@ const getUsers = async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({ message: "No users found" });
     }
-    
+
     const reversedResult = result.reverse();
 
     // Return the result
