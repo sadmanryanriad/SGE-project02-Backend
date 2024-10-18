@@ -22,6 +22,13 @@ const sendExpendRequest = async (req, res) => {
       user.budget = {};
     }
 
+    if (!user.budget.dueDate) {
+      return res.status(403).json({
+        message:
+          "You are not eligible to submit a budget expand request, untill Budget allocation.",
+      });
+    }
+
     if (user.budget.requestBudget && user.budget.requestNote) {
       return res.status(400).json({
         message:
@@ -39,7 +46,7 @@ const sendExpendRequest = async (req, res) => {
     // Send a success response
     return res
       .status(200)
-      .json({ message: "Expend request sent successfully", user });
+      .json({ message: "Expend request sent successfully.Wait for the finace response", user });
   } catch (error) {
     // Handle any errors
     console.error(error);
