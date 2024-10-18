@@ -22,6 +22,13 @@ const sendExpendRequest = async (req, res) => {
       user.budget = {};
     }
 
+    if (user.budget.requestBudget && user.budget.requestNote) {
+      return res.status(400).json({
+        message:
+          "You have already submitted an budegt expand request. Please wait for the finance team to respond before submitting a new expand request.",
+      });
+    }
+
     // Update the request budget and note
     user.budget.requestBudget = requestBudget;
     user.budget.requestNote = requestNote;
